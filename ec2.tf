@@ -26,6 +26,7 @@ resource "aws_security_group" "app_sg" {
 resource "aws_instance" "app_ec2" {
   ami           ="ami-020cba7c55df1f615"
   instance_type = "t2.micro"
+  subnet_id     = "subnet-089f883550bbc81aa"
   key_name      = var.key_name
   iam_instance_profile = aws_iam_instance_profile.upload_profile.name
   vpc_security_group_ids = [aws_security_group.app_sg.id]
