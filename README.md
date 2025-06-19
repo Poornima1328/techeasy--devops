@@ -20,8 +20,11 @@ cd repository
 
 ls
 
+
 created files and added the code using the vi editor to different files respectively as per the requirement
 Files which I have created are 
+
+
 
 main.tf – Provider and environment setup
 
@@ -43,6 +46,7 @@ deploy.yaml – Optional deployment config (if applicable)
 
 Next executed the terraform commands like
 
+
 terraform init
 terraform plan
 
@@ -53,6 +57,7 @@ A unique S3 bucket name
 An existing EC2 key pair name in the selected region
 
 The environment (e.g., dev or prod)
+
 
 aws configure
 apt install awscli
