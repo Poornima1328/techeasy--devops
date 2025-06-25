@@ -1,0 +1,8 @@
+{
+  "environment": "prod",
+  "log_level": "error",
+  "feature_flags": {
+    "monitoring": true
+  }
+}
+
