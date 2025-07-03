@@ -7,6 +7,14 @@ on:
         description: 'Environment to deploy (dev, qa, prod)'
         required: true
         default: 'dev'
+name: Deploy App
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "deploy-*"
 
 jobs:
   deploy:
@@ -30,3 +38,40 @@ jobs:
     - name: Terraform Apply
       run: terraform apply -auto-approve -var-file="${{ github.event.inputs.stage }}.tfvars" -var="bucket_name=mybucket-${{ github.event.inputs.stage }}"
       working-directory: newdirectory
+    env:
+      AWS_REGION: us-east-2
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.6.0
+
+      - name: Terraform Init
+        run: terraform init
+        working-directory: ./terraform
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve -var="bucket_name=mybucket-${{ github.ref_name }}" -var="key_name=my-key" -var="stage=${{ github.ref_name }}"
+        working-directory: ./terraform
+
+      - name: Get EC2 Public IP
+        id: ec2_ip
+        run: |
+          echo "EC2_IP=$(terraform output -raw public_ip)" >> $GITHUB_ENV
+        working-directory: ./terraform
+
+      - name: Wait & Check Health
+        run: |
+          echo "Waiting for EC2 to start..."
+          sleep 60
+          curl --retry 10 --retry-delay 10 http://$EC2_IP
