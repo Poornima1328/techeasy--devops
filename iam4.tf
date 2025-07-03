@@ -18,7 +18,7 @@ resource "aws_iam_policy" "upload_policy" {
       {
         Effect = "Allow",
         Action = ["s3:PutObject", "s3:CreateBucket"],
-        Resource = [
+        Resource = [ 
           "arn:aws:s3:::${var.bucket_name}",
           "arn:aws:s3:::${var.bucket_name}/*"
         ]
@@ -37,7 +37,7 @@ resource "aws_iam_policy" "upload_policy" {
 
 resource "aws_iam_role_policy_attachment" "upload_attach" {
   role       = aws_iam_role.upload_s3.name
-  policy_arn = aws_iam_policy.upload_policy.arn
+  policy_arn = aws_iam_policy.upload_policy.arn 
 }
 
 resource "aws_iam_instance_profile" "upload_profile" {
